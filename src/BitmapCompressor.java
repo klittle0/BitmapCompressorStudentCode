@@ -34,8 +34,21 @@ public class BitmapCompressor {
     public static void compress() {
 
         // TODO: complete compress()
+        //identify the length of consecutive 0s or 1s
+        // then write the number of 0s/1s as (number).0 or (number).1
+
+        //ID the starting value: 0 or 1?
+        // write that first
+        // find the length of consecutive values like that, and then write that in binary
+        // EX: you have 32 successive 0s. Would be written as "0", then "number__"
+        // Actually maybe I should put a limit. 16, since this can be represented with only 4 bits.
+        // Write UP TO 16 bits successively.
+
+        // When I'm reading the file to expand, I will look for a 1-bit number, then a 4-bit number, and keep going back and forth.
+
 
         BinaryStdOut.close();
+
     }
 
     /**
