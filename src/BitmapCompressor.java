@@ -26,54 +26,55 @@
  *  @author Kate Little
  */
 public class BitmapCompressor {
-    static final int BITS = 4;
-
+    static final int BYTE = 8;
+    static final int MAX = 255;
+    static final int BIT = 1;
     /**
      * Reads a sequence of bits from standard input, compresses them,
      * and writes the results to standard output.
      */
     public static void compress() {
-        int currentChar = 0;
+        int currentBit = 0;
         int seqLength = 0;
-        // Keep going until file is empty
+        // Check each bit until file is empty
         while (!BinaryStdIn.isEmpty()){
-            int bit = BinaryStdIn.readInt(1);
-            // Looks at next 15 bits
-            int index = seqLength;
-            // For up to 15 bits
-            if (seqLength < 16) {
-                // Check if it's equal to the current 0 or 1
-                if (bit == currentChar) {
-                    seqLength++;
-                }
-                // If not, write & reset everything
-                else {
-                    // Writes the # of 0s or 1s in the sequence
-                    BinaryStdOut.write(seqLength, BITS);
-                    // Switch current char
-                    currentChar = 1 - currentChar;
-                    seqLength = 0;
-                }
+            int bit = BinaryStdIn.readInt(BIT);
+            // Current bit needs to change from 0 to 1, or vice versa
+            if (bit != currentBit){
+                BinaryStdOut.write(seqLength, BYTE);
+                seqLength = 0;
+                // Switch current bit —> 0 to 1, or 1 to 0
+                currentBit = 1 - currentBit;
+            }
+            // If we have maxed out, write out maximum & keep checking for current bit
+            if (bit == currentBit && seqLength == MAX){
+                BinaryStdOut.write(seqLength, BYTE);
+                // Assume that there are more than 255 0s, so keep looking for 0s
+                BinaryStdOut.write(0, BYTE);
+                seqLength = 0;
+            }
+            else{
+                seqLength++;
             }
         }
+        // Write out the remaining/final sequence
+        BinaryStdOut.write(seqLength, BYTE);
         BinaryStdOut.close();
     }
-
     /**
      * Reads a sequence of bits from standard input, decodes it,
      * and writes the results to standard output.
      */
     public static void expand() {
-        // get a section of 4 bits at a time, and
-        int currentChar = 0;
+        int currentBit = 0;
         while (!BinaryStdIn.isEmpty()){
-            // takes 4 bits at a time
-            int section = BinaryStdIn.readInt(BITS);
-            // Writes all bits
-            for (int i = 0; i < section; i++){
-                BinaryStdOut.write(currentChar, 1);
+            // Read a byte at a time
+            int seqLength= BinaryStdIn.readInt(BYTE);
+            // Print the full sequence of the current bit
+            for (int i = 0; i < seqLength; i++){
+                BinaryStdOut.write(currentBit, BIT);
             }
-            currentChar = 1 - currentChar;
+            currentBit = 1 - currentBit;
         }
         BinaryStdOut.close();
     }
