@@ -33,42 +33,30 @@ public class BitmapCompressor {
      * and writes the results to standard output.
      */
     public static void compress() {
-        String text = BinaryStdIn.readString();
-        int len = text.length();
         int currentChar = 0;
         int seqLength = 0;
-        // Write how many 0s, then how many 1s, etc
-        int i = 0;
-        while (i < len){
-            // Looks at next 16 bits
-            for (int j = i; j < 16; j++) {
-                // If we continue with the sequence of same value, increment
-                if (text.charAt(j) == currentChar) {
+        // Keep going until file is empty
+        while (!BinaryStdIn.isEmpty()){
+            int bit = BinaryStdIn.readInt(1);
+            // Looks at next 15 bits
+            int index = seqLength;
+            // For up to 15 bits
+            if (seqLength < 16) {
+                // Check if it's equal to the current 0 or 1
+                if (bit == currentChar) {
                     seqLength++;
-                } else {
-                    // If the sequence ends, break
-                    break;
+                }
+                // If not, write & reset everything
+                else {
+                    // Writes the # of 0s or 1s in the sequence
+                    BinaryStdOut.write(seqLength, BITS);
+                    // Switch current char
+                    currentChar = 1 - currentChar;
+                    seqLength = 0;
                 }
             }
-            // Writes the # of 0s or 1s in the sequence
-            BinaryStdOut.write(seqLength, BITS);
-            // Switch current char
-            currentChar = 1 - currentChar;
-            // Increment i
-            i += seqLength;
         }
-        //identify the length of consecutive 0s or 1s
-        // then write the number of 0s/1s as (number).0 or (number).1
-
-        //ID the starting value: 0 or 1?
-        // write that first
-        // find the length of consecutive values like that, and then write that in binary
-        // EX: you have 32 successive 0s. Would be written as "0", then "number__"
-        // Actually maybe I should put a limit. 16, since this can be represented with only 4 bits.
-        // Write UP TO 16 bits successively.
-
         BinaryStdOut.close();
-
     }
 
     /**
