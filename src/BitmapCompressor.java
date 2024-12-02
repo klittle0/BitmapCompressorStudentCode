@@ -53,9 +53,8 @@ public class BitmapCompressor {
                 BinaryStdOut.write(0, BYTE);
                 seqLength = 0;
             }
-            else{
-                seqLength++;
-            }
+            seqLength++;
+
         }
         // Write out the remaining/final sequence
         BinaryStdOut.write(seqLength, BYTE);
